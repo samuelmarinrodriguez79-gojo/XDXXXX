@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petición Romántica v2.0</title>
+    <style>
+        :root {
+            --bg-color: #f3f0ff;
+            --card-bg: #ffffff;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent: #a855f7;
+            --text-main: #1e1b4b;
+            --text-muted: #6b7280;
+            --code-comment: #9333ea;
+            --border: #e2e8f0;
+            --success: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+            width: 100%;
+            max-width: 480px;
+            padding: 32px;
+            text-align: center;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            position: relative;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Código / Comentarios */
+        .code-comment {
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--code-comment);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        /* Contenedores de Memes */
+        .meme-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meme-img {
+            max-height: 140px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        /* Inputs y Opciones */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .option-item {
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-item:hover {
+            border-color: var(--accent);
+            background: #faf5ff;
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: #eef2ff;
+            font-weight: bold;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        input[type="date"], input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Botones */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s, transform 0.1s;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        /* Estilos del Resumen Final */
+        .summary-box {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 24px;
+            border: 1px dashed var(--accent);
+        }
+
+        .summary-row {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .summary-key {
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--code-comment);
+            font-weight: bold;
+        }
+
+        .final-box {
+            border: 2px solid #fbcfe8;
+            background: #fff1f2;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .success-card {
+            border: 2px solid #bbf7d0;
+            background: #f0fdf4;
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .success-title {
+            color: var(--success);
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        
+        <div class="step active" id="step-0">
+            <div class="meme-container">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmszamY3dG93ZXF5ZDY5bTVtZXA1dXN6bXY1ZndpZXV3ZXJ5cHZpciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/C9x8gX02SnMIoAClXa/giphy.gif" alt="Gato educado" class="meme-img">
+            </div>
+            <h2>¿Saldrías conmigo?</h2>
+            <div class="code-comment">// ejecutando: peticion_romantica_v2.0.cat</div>
+            <p style="margin: 20px 0; font-weight: 500;">Antes de responder... ¡responde esto primero!</p>
+            <div class="code-comment" style="color: var(--text-muted);">/* se requiere una respuesta para continuar */</div>
+            <button class="btn" onclick="nextStep(1)">[ INICIAR PROTOCOLO —> ]</button>
+        </div>
+
+        <div class="step" id="step-1">
+            <div class="meme-container">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW8wd3g5M295N3p1ZXB0YjRscXUzZndwNTI1bWw3b3MxZnd4cXpxOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/KztT2c4u8mYYUiBtOh/giphy.gif" alt="Meme amor" class="meme-img">
+            </div>
+            <h2>¿Quieres tener una cita conmigo? 🥰</h2>
+            <div class="btn-container" style="position: relative; min-height: 80px;">
+                <button class="btn" onclick="nextStep(2)">Sí 💜</button>
+                <button class="btn btn-secondary" id="no-btn" style="position: absolute; right: 0; width: auto;">No</button>
+            </div>
+        </div>
+
+        <div class="step" id="step-2">
+            <div class="meme-container">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHM1ODNqd3BwN3I3NTNnY3N0Nm90ZXN5NjNnd3J0M2M1Ym9wYmFubSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/4ZO1ENMm1gODwRHvJF/giphy.gif" alt="Perro bailando" class="meme-img">
+            </div>
+            <div class="code-comment">// módulo: agenda_sync</div>
+            <h2>¿Cuándo estás disponible? 📅</h2>
+            <div class="input-group">
+                <label>Fecha:</label>
+                <input type="date" id="input-date">
+            </div>
+            <div class="input-group">
+                <label>Hora:</label>
+                <input type="time" id="input-time">
+            </div>
+            <button class="btn" onclick="saveAgenda()">[ CONFIRMAR FECHA —> ]</button>
+        </div>
+
+        <div class="step" id="step-3">
+            <div class="code-comment">// modulo: entretenimiento.exe</div>
+            <h2>Noche de películas — ¿qué género seleccionas?</h2>
+            <div class="options-list" id="options-movies">
+                <div class="option-item" onclick="selectOption('movies', this)">Sci-Fi con universos paralelos y física cuántica</div>
+                <div class="option-item" onclick="selectOption('movies', this)">Thriller psicológico estilo glitch en la matrix</div>
+                <div class="option-item" onclick="selectOption('movies', this)">Documental de ciencia - IRL tutorials 🧪</div>
+                <div class="option-item" onclick="selectOption('movies', this)">Comedia romántica — si, el bug más predecible 🍿</div>
+            </div>
+            <button class="btn" onclick="submitStep(3, 'movies', 4)">[ SIGUIENTE PARÁMETRO —> ]</button>
+        </div>
+
+        <div class="step" id="step-4">
+            <div class="code-comment">// modulo: actividades_sociales.config</div>
+            <h2>Primera cita — ¿qué instancia ejecutamos?</h2>
+            <div class="options-list" id="options-place">
+                <div class="option-item" onclick="selectOption('place', this)">Café + laptop — pair programming romántico ☕</div>
+                <div class="option-item" onclick="selectOption('place', this)">Planetario — explorar el universo juntos ✨</div>
+                <div class="option-item" onclick="selectOption('place', this)">Arcade vintage — retro, pixelado y genial 🎮</div>
+                <div class="option-item" onclick="selectOption('place', this)">Librería + helado — the OG nerd date 🍦</div>
+            </div>
+            <button class="btn" onclick="submitStep(4, 'place', 5)">[ CONTINUAR —> ]</button>
+        </div>
+
+        <div class="step" id="step-5">
+            <div class="code-comment">// modulo: nutricion_social.dat</div>
+            <h2>¿Qué comemos? Yo invito (o sea... compartimos, ¿no? 🥹)</h2>
+            <div class="code-comment" style="color: var(--text-muted);">// instalando: gestion_recursos_alimenticios.sh</div>
+            <div class="options-list" id="options-food">
+                <div class="option-item" onclick="selectOption('food', this)">Pizza — el stack más sólido de la gastronomía 🍕</div>
+                <div class="option-item" onclick="selectOption('food', this)">Sushi — raw data sin procesar 🍣</div>
+                <div class="option-item" onclick="selectOption('food', this)">Burger — arquitectura en capas de sabor 🍔</div>
+                <div class="option-item" onclick="selectOption('food', this)">Tacos — open source & altamente customizable 🌮</div>
+            </div>
+            <button class="btn" onclick="submitStep(5, 'food', 6)">[ CASI LISTO —> ]</button>
+        </div>
+
+        <div class="step" id="step-6">
+            <div class="code-comment">// modulo: nivel_compromiso.final</div>
+            <h2>Después de la cita... ¿qué hacemos? (hypothetically 👀)</h2>
+            <div class="options-list" id="options-after">
+                <div class="option-item" onclick="selectOption('after', this)">Paseo nocturno + debate sobre el libre albedrío 🌌</div>
+                <div class="option-item" onclick="selectOption('after', this)">Crear una playlist compartida hasta las 3am 🎵</div>
+                <div class="option-item" onclick="selectOption('after', this)">Board game maratón — ganador elige la próxima cita 🎲</div>
+                <div class="option-item" onclick="selectOption('after', this)">Ver las estrellas desde algún lugar secreto ⭐️</div>
+            </div>
+            <button class="btn" onclick="submitStep(6, 'after', 7)">[ COMPILAR RESPUESTAS —> ]</button>
+        </div>
+
+        <div class="step" id="step-7">
+            <h2>Resumen de compatibilidad</h2>
+            <div class="code-comment">// análisis completado: match_score calculando... 💜</div>
+            
+            <div class="summary-box" id="summary-content">
+                </div>
+
+            <div class="final-box">
+                <p style="font-weight: bold; margin-bottom: 4px;">Entonces... ¿saldrías conmigo?</p>
+                <div class="code-comment" style="font-size: 0.8rem; margin: 0;">// advertencia: respuesta_incorrecta no existe en este programa</div>
+            </div>
+
+            <button class="btn" style="background: #ec4899;" onclick="nextStep(8)">[ ¡SÍ, ACEPTO LOS TÉRMINOS Y CONDICIONES! ]</button>
+        </div>
+
+        <div class="step" id="step-8">
+            <div class="meme-container">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW01M3NycTN5YTNwY3g1OXV0ZWhnaXp4Y2g3M2Y1M295bWw3dXN4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/v6aOjy0Qo1fIA/giphy.gif" alt="Gato feliz" class="meme-img">
+            </div>
+            <div class="success-card">
+                <div class="success-title">¡Match confirmado!</div>
+                <div class="code-comment" style="color: var(--success);">// status: EXITO</div>
+                <div class="code-comment" style="color: var(--success);">// romance.exe iniciado correctamente</div>
+                <div class="code-comment" style="color: var(--primary); margin-top: 10px;">// nos vemos pronto, mi nerd favorito/a 💜</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Almacenamiento de respuestas del usuario
+        const answers = {
+            date: '',
+            time: '',
+            movies: '',
+            place: '',
+            food: '',
+            after: ''
+        };
+
+        // Cambiar entre pantallas de la app
+        function nextStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`step-${stepNumber}`).classList.add('active');
+
+            if (stepNumber === 7) {
+                buildSummary();
+            }
+        }
+
+        // Lógica de selección exclusiva de items
+        function selectOption(category, element) {
+            const parent = element.parentElement;
+            parent.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+            element.classList.add('selected');
+            answers[category] = element.innerText;
+        }
+
+        // Guardar y validar fecha
+        function saveAgenda() {
+            const dateInput = document.getElementById('input-date').value;
+            const timeInput = document.getElementById('input-time').value;
+
+            if (!dateInput || !timeInput) {
+                alert("Por favor introduce una fecha y hora válidas para sincronizar agendas.");
+                return;
+            }
+
+            answers.date = dateInput;
+            answers.time = timeInput;
+            nextStep(3);
+        }
+
+        // Validar que se haya seleccionado opción antes de avanzar
+        function submitStep(currentStepNum, category, nextStepNum) {
+            if (!answers[category]) {
+                alert("Selecciona una opción para continuar con el flujo de datos.");
+                return;
+            }
+            nextStep(nextStepNum);
+        }
+
+        // Construir dinámicamente el bloque del resumen final
+        function buildSummary() {
+            const summaryBox = document.getElementById('summary-content');
+            summaryBox.innerHTML = `
+                <div class="summary-row"><span class="summary-key">pelicula::</span> / ${answers.movies}</div>
+                <div class="summary-row"><span class="summary-key">fecha::</span> / 📅 ${answers.date} a las ${answers.time}</div>
+                <div class="summary-row"><span class="summary-key">plan::</span> / ${answers.place}</div>
+                <div class="summary-row"><span class="summary-key">comida::</span> / ${answers.food}</div>
+                <div class="summary-row"><span class="summary-key">despues::</span> / ${answers.after}</div>
+            `;
+        }
+
+        // Comportamiento travieso del botón "No" (Huye del cursor)
+        const noBtn = document.getElementById('no-btn');
+        
+        function moveNoButton() {
+            // Generar posiciones aleatorias dentro del viewport visible de la pantalla
+            const padding = 50;
+            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+        }
+
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Evita clicks accidentales en móvil
+            moveNoButton();
+        });
+    </script>
+</body>
+</html>
